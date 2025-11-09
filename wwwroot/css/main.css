@@ -19,38 +19,28 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
-  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #040677; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #1acc8d; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --background-color: #622395; /* Background color for the entire website, including individual sections */
+  --default-color: #622395; /* Default color used for the majority of the text content across the entire website */
+  --light-heading-color: #ffffff; /* Color for headings, subheadings and title throughout the website */
+  --dark-heading-color: #622395; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #a3138c; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --contrast-color: #faca3c; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --light-background: #f2f2f2;
+  --heading-color:#a3138c;
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
   --nav-color: #ffffff;  /* The default color of the main navmenu links */
-  --nav-hover-color: #1acc8d; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-hover-color: #f34a50; /* Applied to main navmenu links when they are hovered over or active */
   --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
   --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #444444; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #1acc8d; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-dropdown-color: #622395; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #f34a50; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
-/* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
-.light-background {
-  --background-color: #f4f5fe;
-  --surface-color: #ffffff;
-}
-
-.dark-background {
-  --background-color: #08005e;
-  --default-color: #ffffff;
-  --heading-color: #ffffff;
-  --surface-color: #0c0091;
-  --contrast-color: #ffffff;
-}
 
 /* Smooth scroll */
 :root {
@@ -84,6 +74,16 @@ h4,
 h5,
 h6 {
   color: var(--heading-color);
+  font-family: var(--heading-font);
+}
+
+.icon-boxes h1,
+.icon-boxes h2,
+.icon-boxes h3,
+.icon-boxes h4,
+.icon-boxes h5,
+.icon-boxes h6 {
+  color: var(--dark-heading-color);
   font-family: var(--heading-font);
 }
 
@@ -176,7 +176,7 @@ h6 {
 /* Global Header on Scroll
 ------------------------------*/
 .scrolled .header {
-  --background-color: #10058c;
+  --background-color: #622395;
 }
 
 /*--------------------------------------------------------------
@@ -821,16 +821,16 @@ section,
   font-size: 48px;
   font-weight: 700;
   line-height: 56px;
-  color: color-mix(in srgb, var(--heading-color), transparent 30%);
+  color: var(--light-heading-color);
 }
 
 .hero h1 span {
-  color: var(--heading-color);
+  color: var(--light-heading-color);
   border-bottom: 4px solid var(--accent-color);
 }
 
 .hero p {
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  color: var(--contrast-color); 
   margin: 5px 0 30px 0;
   font-size: 22px;
   font-weight: 400;
@@ -916,21 +916,21 @@ section,
 .hero .wave1 use {
   animation: move-forever1 10s linear infinite;
   animation-delay: -2s;
-  fill: var(--default-color);
-  opacity: 0.6;
+  fill: var(--surface-color);
+  opacity: 0.3;
 }
 
 .hero .wave2 use {
   animation: move-forever2 8s linear infinite;
   animation-delay: -2s;
-  fill: var(--default-color);
-  opacity: 0.4;
+  fill: var(--surface-color);
+  opacity: 0.2;
 }
 
 .hero .wave3 use {
   animation: move-forever3 6s linear infinite;
   animation-delay: -2s;
-  fill: var(--default-color);
+  fill: var(--light-background);
 }
 
 @keyframes move-forever1 {
@@ -978,6 +978,7 @@ section,
 --------------------------------------------------------------*/
 .about {
   padding-top: 100px;
+  background-color: var(--light-background);
 }
 
 .about .content h3 {
@@ -985,8 +986,7 @@ section,
   font-weight: 500;
   line-height: 19px;
   padding: 10px 20px;
-  background: color-mix(in srgb, var(--accent-color), transparent 95%);
-  color: var(--accent-color);
+  color: var(--light-heading-color);
   border-radius: 7px;
   display: inline-block;
 }
@@ -1109,7 +1109,7 @@ section,
 }
 
 .features .features-item h3 a {
-  color: var(--heading-color);
+  color: var(--dark-heading-color);
   transition: 0.3s;
 }
 
@@ -1162,7 +1162,7 @@ section,
 .stats .stats-item p {
   padding: 0;
   margin: 0;
-  font-family: var(--heading-font);
+  font-family: var(--contrast-color);
   font-size: 16px;
 }
 
@@ -1569,7 +1569,12 @@ section,
 }
 
 .faq .content p {
-  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  color: var(--default-color);
+}
+
+.content p {
+  color: var(--default-color);
+
 }
 
 .faq .faq-container {
