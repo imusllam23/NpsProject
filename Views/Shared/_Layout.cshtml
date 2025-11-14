@@ -7,67 +7,108 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NpsProject.styles.css" asp-append-version="true" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"asp-append-version="true"/>
-    <link href="~/lib/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"asp-append-version="true"/>
-    <link href="~/lib/aos/aos.css" rel="stylesheet"asp-append-version="true"/>
-    <link href="~/lib/glightbox/css/glightbox.min.css" rel="stylesheet" asp-append-version="true"/>
-    <link href="~/lib/swiper/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true"/>
-    <link href="~/css/main.css" rel="stylesheet" asp-append-version="true"/>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/aos/aos.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/glightbox/css/glightbox.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/swiper/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/main.css" rel="stylesheet" asp-append-version="true" />
 
 </head>
 <body>
-   <header id="header" class="header d-flex align-items-center fixed-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+    <header id="header" class="header d-flex align-items-center fixed-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">الذكاء الثالث</h1>
-      </a>
+            <a href="index.html" class="logo d-flex align-items-center">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <!-- <img src="assets/img/logo.png" alt=""> -->
+                <h1 class="sitename">الذكاء الثالث</h1>
+            </a>
 
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="#hero" class="active">Home</a></li>
-          <li><a href="#about">من نحن</a></li>
-          <li><a href="#features">مجالاتنا وخدماتنا</a></li>
-          <li><a href="#gallery">Gallery</a></li>
-          <li><a href="#team">Team</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+            <nav id="navmenu" class="navmenu">
                 <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
+                    <li><a href="#hero" class="active">الرئيسية</a></li>
+                    <li><a href="#about">من نحن</a></li>
+                    <li><a href="#services-section">مجالاتنا وخدماتنا</a></li>
+                    <li><a href="#Work">أعمالنا</a></li>
+                 
+                    <li><a href="#contact">تواصل معنا</a></li>
                 </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
 
-    </div>
-  </header>
+        </div>
+    </header>
     <div>
-        <main  class="main" role="main">
+        <main class="main" role="main">
             @RenderBody()
         </main>
     </div>
 
-     <!-- Scroll Top -->
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <footer id="footer" class="bg-dark text-light pt-5 pb-4 ">
+        <div class="container">
+            <div class="row gy-4">
 
-  <!-- Preloader -->
-  <div id="preloader"></div>
+                <!-- من نحن -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold mb-3 text-white">من نحن</h5>
+                    <p class="small text-secondary">
+                        شركة سعودية متخصصة في تطوير الحلول التقنية والتعليمية منذ عام 2018م،
+                        تقدم خدمات رقمية متكاملة تدعم التحول الرقمي والتعليم الإلكتروني
+                        وفق رؤية المملكة 2030.
+                    </p>
+                </div>
+
+                <!-- خدماتنا -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3 text-white">خدماتنا</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">تطوير الأنظمة والمواقع</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">التعليم الإلكتروني</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">التسويق الرقمي</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">الاستشارات التقنية</a></li>
+                    </ul>
+                </div>
+
+                <!-- روابط سريعة -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3 text-white">روابط سريعة</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">الرئيسية</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">من نحن</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">أعمالنا</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none d-block mb-2">تواصل معنا</a></li>
+                    </ul>
+                </div>
+
+                <!-- تواصل معنا -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold mb-3 text-white">تواصل معنا</h5>
+                    <p class="mb-1"><i class="bi bi-envelope"></i> info@3itech.sa</p>
+                    <p class="mb-3"><i class="bi bi-globe"></i> <a href="https://3itech.sa" class="text-secondary text-decoration-none">3itech.sa</a></p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-light fs-5"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-light fs-5"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-light fs-5"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary mt-4 mb-3" />
+            <div class="text-center small text-secondary">
+                © 2025 شركة الذكاء الثالث لتقنية المعلومات - جميع الحقوق محفوظة
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
