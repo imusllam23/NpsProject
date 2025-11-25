@@ -1,0 +1,28 @@
+﻿.featured-card {
+    transition: transform 0.3s ease;
+}
+
+    .featured-card:hover {
+        transform: translateY(-5px);
+    }
+
+.news-card {
+    transition: all 0.3s ease;
+}
+
+    .news-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
+    }
+
+        .news-card:hover img {
+            transform: scale(1.1);
+        }
+
+.bg-gradient-primary {
+    background: var(--second-background-color);
+}
+
+.stretched-link:hover {
+    color: var(--bs-primary) !important;
+}

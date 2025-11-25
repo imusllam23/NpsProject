@@ -1,0 +1,228 @@
+﻿@model IEnumerable<NpsProject.Models.NewsArticle>
+
+@{
+    ViewData["Title"] = "الأخبار";
+}
+
+
+<!-- Hero Section -->
+<partial name="_TopHeader" />
+<style>
+    body {
+        background-color: var( --light-backgroun);
+    }
+</style>
+<!-- Main Content -->
+<div class="container my-5">
+    
+    @if (!Model.Any())
+    {
+        <!-- رسالة عدم وجود أخبار -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted mb-4"></i>
+                    <h3 class="text-muted">لا توجد أخبار حالياً</h3>
+                    <p class="text-muted">سيتم نشر الأخبار قريباً. تابعنا لمعرفة آخر المستجدات</p>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- الخبر الرئيسي (Featured) -->
+            var featuredNews = Model.OrderByDescending(n => n.PublishedDate).FirstOrDefault();
+        
+        @if (featuredNews != null)
+        {
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card border-0 shadow-lg overflow-hidden featured-card">
+                        <div class="row g-0">
+                            <div class="col-md-6">
+                                @if (!string.IsNullOrEmpty(featuredNews.ImageUrl))
+                                {
+                                    <img src="@featuredNews.ImageUrl" 
+                                         class="img-fluid w-100 h-100" 
+                                         style="object-fit: cover; min-height: 400px;"
+                                         alt="@featuredNews.Title">
+                                }
+                                else
+                                {
+                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center" 
+                                         style="min-height: 400px;">
+                                        <i class="bi bi-newspaper display-1 text-white opacity-50"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-6 d-flex flex-column">
+                                <div class="card-body p-5 d-flex flex-column h-100">
+                                    <span class="badge bg-orange mb-3 align-self-start">
+                                        <i class="bi bi-star-fill me-1"></i>أحدث الأخبار
+                                    </span>
+                                    
+                                    <h2 class="card-title fw-bold mb-3">@featuredNews.Title</h2>
+                                    
+                                    <p class="card-text text-muted mb-4 flex-grow-1">
+                                        @if (featuredNews.Content.Length > 200)
+                                        {
+                                            @(featuredNews.Content.Substring(0, 200) + "...")
+                                        }
+                                        else
+                                        {
+                                            @featuredNews.Content
+                                        }
+                                    </p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <div class="text-muted small">
+                                            <i class="bi bi-calendar3 me-2"></i>
+                                            @featuredNews.PublishedDate.ToString("dd MMMM yyyy")
+                                            @if (!string.IsNullOrEmpty(featuredNews.Author))
+                                            {
+                                                <span class="mx-2">|</span>
+                                                <i class="bi bi-person me-2"></i>@featuredNews.Author
+                                            }
+                                        </div>
+                                        <a asp-action="Details" asp-route-id="@featuredNews.Id" 
+                                           class="btn btn-gradient btn-lg">
+                                            استعرض <i class="bi bi-arrow-left ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- بقية الأخبار -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="fw-bold mb-4">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>جميع الأخبار
+                </h3>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var article in Model.Skip(1))
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm news-card">
+                        <!-- صورة الخبر -->
+                        <div class="position-relative overflow-hidden" style="height: 250px;">
+                            @if (!string.IsNullOrEmpty(article.ImageUrl))
+                            {
+                                <img src="@article.ImageUrl" 
+                                     class="card-img-top w-100 h-100" 
+                                     style="object-fit: cover; transition: transform 0.3s;"
+                                     alt="@article.Title">
+                            }
+                            else
+                            {
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                                    <i class="bi bi-image display-4 text-muted"></i>
+                                </div>
+                            }
+                            
+                            <!-- Badge التاريخ -->
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge bg-white text-dark shadow-sm">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    @article.PublishedDate.ToString("dd MMM")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <!-- العنوان -->
+                            <h5 class="card-title fw-bold mb-3">
+                                <a asp-action="Details" asp-route-id="@article.Id" 
+                                   class="text-decoration-none text-dark stretched-link">
+                                    @article.Title
+                                </a>
+                            </h5>
+
+                            <!-- المحتوى -->
+                            <p class="card-text text-muted flex-grow-1">
+                                @if (article.Content.Length > 120)
+                                {
+                                    @(article.Content.Substring(0, 120) + "...")
+                                }
+                                else
+                                {
+                                    @article.Content
+                                }
+                            </p>
+
+                            <!-- Footer -->
+                            <div class="pt-3 border-top mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    @if (!string.IsNullOrEmpty(article.Author))
+                                    {
+                                        <small class="text-muted">
+                                            <i class="bi bi-person-circle me-1"></i>
+                                            @article.Author
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">
+                                            @article.PublishedDate.ToString("dd MMMM yyyy")
+                                        </small>
+                                    }
+                                    <i class="bi bi-arrow-left text-default-color"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination (إذا كانت الأخبار كثيرة) -->
+        @if (Model.Count() > 9)
+        {
+            <div class="row mt-5">
+                <div class="col-12">
+                    <nav aria-label="تصفح الأخبار">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">السابق</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">التالي</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+
+@section styles{
+    <link href="~/css/news.css" rel="stylesheet"  asp-append-version="true"/>
+}
+@section scripts {
+    <!-- lib JS Files -->
+    <script src="~/lib/php-email-form/validate.js"></script>
+    <script src="~/lib/aos/aos.js"></script>
+
+    <script src="~/lib/glightbox/js/glightbox.min.js"></script>
+    <script src="~/lib/purecounter/purecounter_vanilla.js"></script>
+    <script src="~/lib/swiper/swiper-bundle.min.js"></script>
+    @* <script>
+      AOS.init();
+    </script> *@
+
+    <!-- Main JS File -->
+    <script src="~/js/main.js"></script>
+}

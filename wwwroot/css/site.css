@@ -36,3 +36,29 @@ body {
     z-index: 2;
     vertical-align: middle;
 }
+
+.decoration-1 {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25rem;
+    background: #ffffff0f;
+    right: 5%;
+    bottom: -30px;
+    box-shadow: 1px 1px 20px 3px #ffffff0f;
+}
+.decoration-2 {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25rem;
+    background: #ffffff0f;
+    right: 75%;
+    top: -63px;
+    box-shadow: 1px 1px 20px 3px #ffffff0f;
+}
+

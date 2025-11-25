@@ -3,7 +3,33 @@
 *@
 
 
-<section>
-    <p>test</p>
+<!-- Hero Section -->
+<section class="hero-2 position-relative text-white d-flex align-items-center">
+    <div class="decoration-1"></div>
+
+    <div class="decoration-2"></div>
+    <div class="container text-center">
+        <h1 class="fw-bold">@ViewData["Title"]</h1>
+        @if (ViewData["DescTitle"] != null)
+        {
+            <p class="mt-2">@ViewData["DescTitle"]</p>
+
+        }
+
+    </div>
+
+    <!-- موجة -->
+    <svg class="hero-wave position-absolute bottom-0 start-0 w-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 180">
+        <path fill="#ffffff" fill-opacity="1"
+              d="M0,160 C80,150 160,120 240,110 C320,100 400,110 480,130
+       C560,150 640,180 720,170 C800,160 880,110 960,100
+       C1040,90 1120,130 1200,150 C1280,170 1360,170 1440,150
+       L1440,320 L0,320 Z">
+        </path>
+    </svg>
+
+
+
 </section>
+
 

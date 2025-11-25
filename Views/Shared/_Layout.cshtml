@@ -13,6 +13,7 @@
     <link href="~/lib/glightbox/css/glightbox.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/swiper/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/main.css" rel="stylesheet" asp-append-version="true" />
+    @await RenderSectionAsync("styles", required: false)
 
 </head>
 <body>
@@ -27,12 +28,13 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">الرئيسية</a></li>
-                    <li><a href="#about">من نحن</a></li>
-                    <li><a href="#services-section">مجالاتنا وخدماتنا</a></li>
-                    <li><a href="#Work">أعمالنا</a></li>
-                 
-                    <li><a href="#contact">تواصل معنا</a></li>
+                    <li><a href="~/home/#hero">الرئيسية</a></li>
+                    <li><a href="~/home/#about">من نحن</a></li>
+                    <li><a href="~/home/#services-section">مجالاتنا وخدماتنا</a></li>
+                    <li><a href="~/home/#Projects">أعمالنا</a></li>
+                    <li><a href="~/news">الأخبار</a></li>
+
+                    <li><a href="~/home/contact">تواصل معنا</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -109,10 +111,15 @@
 
     <!-- Preloader -->
     <div id="preloader"></div>
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+        <Scripts>
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            @await RenderSectionAsync("Scripts", required: true)
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: true)
+        </Scripts>
+    </asp:ScriptManager>
+   
 </body>
 </html>

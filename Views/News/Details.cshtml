@@ -1,0 +1,164 @@
+﻿@model NpsProject.Models.NewsArticle
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+<partial name="_TopHeader" />
+
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class=" py-3">
+    <div class="container">
+        <ol class="breadcrumb mb-0  flex-row-reverse justify-content-end">
+           
+            
+            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+            <li class="breadcrumb-item">
+                <a asp-action="Index" class="text-decoration-none">الأخبار</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                    <i class="bi bi-house-door"></i> الرئيسية
+                </a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Main Article -->
+<article class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Article Header -->
+            <header class="mb-5">
+                <!-- العنوان -->
+                <h2 class="display-4 fw-bold mb-4 dark">@Model.Title</h2>
+
+                <!-- Meta Information -->
+                <div class="d-flex flex-wrap align-items-center text-muted mb-4 pb-4 border-bottom">
+                    <!-- التاريخ -->
+                    <div class="me-4 mb-2">
+                        <i class="bi bi-calendar3  me-2"></i>
+                        <strong>نُشر في:</strong>
+                        @Model.PublishedDate.ToString("dd MMMM yyyy")
+                    </div>
+
+                    <!-- الكاتب -->
+                    @if (!string.IsNullOrEmpty(Model.Author))
+                    {
+                        <div class="me-4 mb-2">
+                            <i class="bi bi-person-circle  ms-2"></i>
+                            <strong>بواسطة:</strong>
+                            @Model.Author
+                        </div>
+                    }
+
+                    <!-- وقت القراءة المتوقع -->
+                    <div class="me-4 mb-2">
+                        <i class="bi bi-clock  ms-2"></i>
+                        <strong>وقت القراءة:</strong>
+                        @{
+                            var wordCount = Model.Content.Split(' ').Length;
+                            var readingTime = Math.Max(1, wordCount / 200);
+                        }
+                        @readingTime دقيقة
+                    </div>
+
+
+                    <!-- أزرار المشاركة -->
+                    <div class="me-md-auto mb-2 ms-2 me-4">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    onclick="copyLink(this)" title="نسخ الرابط">
+                                <i class="bi bi-link-45deg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Featured Image -->
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <figure class="mb-5">
+                    <img src="@Model.ImageUrl"
+                         class="img-fluid rounded shadow-lg w-100"
+                         alt="@Model.Title"
+                         style="max-height: 600px; object-fit: cover;">
+                    <figcaption class="text-muted text-center mt-3 small">
+                        <i class="bi bi-image me-1"></i>@Model.Title
+                    </figcaption>
+                </figure>
+            }
+
+            <!-- Article Content -->
+            <div class="article-content mb-5">
+                <div class="lead mb-4 text-muted" style="line-height: 1.8;">
+                    @{
+                        var firstParagraph = Model.Content.Split('\n').FirstOrDefault();
+                        if (!string.IsNullOrEmpty(firstParagraph) && firstParagraph.Length > 100)
+                        {
+                            <p class="fs-5">@firstParagraph.Substring(0, Math.Min(200, firstParagraph.Length))</p>
+                        }
+                    }
+                </div>
+
+                <div class="content-body" style="font-size: 1.1rem; line-height: 2;">
+                    @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                </div>
+            </div>
+
+            <!-- Article Footer -->
+            <footer class="pt-4 border-top">
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="d-flex align-items-center">
+                            @if (Model.UpdatedAt.HasValue)
+                            {
+                                <small class="text-muted">
+                                    <i class="bi bi-pencil me-1"></i>
+                                    <strong>آخر تحديث:</strong>
+                                    @Model.UpdatedAt.Value.ToString("dd MMMM yyyy - HH:mm")
+                                </small>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a asp-action="Index" class="btn btn-gradient">
+                            <i class="bi bi-arrow-right me-2"></i>العودة للأخبار
+                        </a>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+@section styles{
+    <link href="~/css/news-details.css" rel="stylesheet" />
+}
+
+@section Scripts {
+   
+    <!-- lib JS Files -->
+    <script src="~/lib/php-email-form/validate.js"></script>
+    <script src="~/lib/aos/aos.js"></script>
+
+    <script src="~/lib/glightbox/js/glightbox.min.js"></script>
+    <script src="~/lib/purecounter/purecounter_vanilla.js"></script>
+    <script src="~/lib/swiper/swiper-bundle.min.js"></script>
+    @* <script>
+      AOS.init();
+    </script> *@
+
+    <!-- Main JS File -->
+    <script src="~/js/main.js"></script>
+    <script src="~/js/news-details.js"></script>
+
+}
