@@ -1,0 +1,185 @@
+﻿@model List<Project>
+
+  <partial name="_TopHeader" />
+
+  @{
+    ViewData["Title"] = "أعمالنا";
+
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+    var totalItems = (int)ViewBag.TotalItems;
+    var model = new List<NewsArticle>();
+  }
+
+<section id="Projects" class=" section bg-white">
+    <div class="container">
+        <h2 class="section-title dark text-center mb-5">
+            <i class="bi bi-briefcase-fill me-2"></i>أعمالنا
+        </h2>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4 justify-content-center">
+                @foreach (var project in Model)
+                {
+                    <div class="col-auto">
+                        <div class="adv-card">
+                            <!-- صورة المشروع -->
+                            @if (!string.IsNullOrEmpty(project.ImageUrl))
+                            {
+                                <div class="adv-card-image"
+                                     style="background-image: url('@project.ImageUrl'); background-size: cover; background-position: center;"
+                                     role="img"
+                                     aria-label="@project.Title">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="adv-card-image"
+                                     aria-label="Abstract gradient background"
+                                     role="img">
+                                    <div class="d-flex align-items-center justify-content-center h-100">
+                                        <i class="bi bi-image display-4 text-light"></i>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="adv-card-content">
+                                <!-- عنوان المشروع -->
+                                <p class="adv-card-title">@project.Title</p>
+
+                                <!-- وصف المشروع -->
+                                <p class="adv-card-description">
+                                    @if (project.Description.Length > 120)
+                                    {
+                                        @(project.Description.Substring(0, 120) + "...")
+                                    }
+                                    else
+                                    {
+                                        @project.Description
+                                    }
+                                </p>
+
+                                <!-- التاجات (Tags) -->
+                                @if (!string.IsNullOrEmpty(project.Tags))
+                                {
+                                    <div class="adv-card-tags">
+                                        @foreach (var tag in project.GetTagsList())
+                                        {
+                                            <span class="adv-card-tag">@tag</span>
+                                        }
+                                    </div>
+                                }
+
+                                <!-- زر التفاصيل -->
+                                <div class="adv-card-footer">
+                                    <a href="@project.Url"
+                                       class="btn btn-gradient mt-auto w-100">
+                                        <i class="bi bi-arrow-left me-2"></i>الرابط
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+            <!-- رسالة عدم وجود مشاريع -->
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted mb-4"></i>
+                <h4 class="text-muted">لا توجد مشاريع حالياً</h4>
+                <p class="text-muted">سيتم عرض مشاريعنا قريباً</p>
+            </div>
+        }
+    </div>
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="تصفح الرسائل" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- السابق -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(currentPage - 1)"
+                       >
+                        <i class="bi bi-chevron-right"></i> السابق
+                    </a>
+                </li>
+
+                <!-- أرقام الصفحات -->
+                @{
+                    var startPage = Math.Max(1, currentPage - 2);
+                    var endPage = Math.Min(totalPages, currentPage + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="1">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+                @for (var i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@totalPages" >
+                            @totalPages
+                        </a>
+                    </li>
+                }
+
+                <!-- التالي -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(currentPage + 1)">
+                        التالي <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- معلومات الصفحة -->
+            <div class="text-center text-muted small">
+                عرض @((currentPage - 1) * ViewBag.PageSize + 1) -
+                @Math.Min(currentPage * ViewBag.PageSize, totalItems)
+                من أصل @totalItems رسالة
+            </div>
+        </nav>
+    }
+</section>
+@section scripts {
+    <!-- lib JS Files -->
+    <script src="~/lib/php-email-form/validate.js"></script>
+    <script src="~/lib/aos/aos.js"></script>
+
+    <script src="~/lib/glightbox/js/glightbox.min.js"></script>
+    <script src="~/lib/purecounter/purecounter_vanilla.js"></script>
+    <script src="~/lib/swiper/swiper-bundle.min.js"></script>
+    @* <script>
+      AOS.init();
+    </script> *@
+
+    <!-- Main JS File -->
+    <script src="~/js/main.js"></script>
+}

@@ -20,15 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\Account\Login.cshtml">
+    <Content Update="Areas\Admin\Views\Account\Login.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\admin\Data\" />
-    <Folder Include="Areas\admin\Models\" />
+    <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Models\ViewModels\" />
   </ItemGroup>
 

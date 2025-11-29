@@ -30,6 +30,26 @@
     --light-background: #f2f2f2;
     --heading-color: #a3138c;
 }
+.pagination {
+    --bs-pagination-color: #622395 !important;
+    --bs-pagination-bg: var(--bs-body-bg) !important;
+    --bs-pagination-border-width: var(--bs-border-width) !important;
+    --bs-pagination-border-color: var(--bs-border-color) !important;
+    --bs-pagination-border-radius: var(--bs-border-radius) !important;
+    --bs-pagination-hover-color: #ffffff !important;
+    --bs-pagination-hover-bg: #a3138c !important;
+    --bs-pagination-hover-border-color: #622395 !important;
+    --bs-pagination-focus-color: #622395 !important;
+    --bs-pagination-focus-bg: var(--bs-secondary-bg);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    --bs-pagination-active-color: #faca3c !important;
+    --bs-pagination-active-bg: #a3138c !important;
+    --bs-pagination-active-border-color: #622395;
+    --bs-pagination-disabled-color: rgb(98 35 149) !important;
+    --bs-pagination-disabled-bg: #ededed !important;
+    --bs-pagination-disabled-border-color: var(--bs-border-color) !important;
+}
+
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
@@ -1850,7 +1870,7 @@ h2.dark {
     .adv-card-title::after {
         content: "";
         position: absolute;
-        left: 0;
+        right: 0;
         bottom: 0;
         width: 50px;
         height: 3px;
@@ -1886,7 +1906,7 @@ h2.dark {
 }
 
     .adv-card-tag:hover {
-        background-color: #4f46e5;
+        background-color: var(--default-color);
         color: #ffffff;
         transform: translateY(-2px);
     }

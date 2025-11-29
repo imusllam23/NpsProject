@@ -1,0 +1,137 @@
+﻿@using NpsProject.Models;
+@model ContactMessage
+
+@{
+    ViewData["Title"] = "تفاصيل الرسالة";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-envelope-open me-2"></i>تفاصيل الرسالة</h2>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-right me-2"></i>العودة
+                </a>
+            </div>
+
+            <!-- بطاقة تفاصيل الرسالة -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-left-text me-2"></i>@Model.Subject
+                    </h5>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- معلومات المرسل -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-3 me-3">
+                                    <i class="bi bi-person-fill fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">البريد الإلكتروني</small>
+                                    <a href="mailto:@Model.Email" class="text-decoration-none fw-bold">
+                                        @Model.Email
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-3 me-3">
+                                    <i class="bi bi-calendar-event fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">تاريخ الإرسال</small>
+                                    <strong>@Model.CreatedAt.ToString("dd MMMM yyyy")</strong>
+                                    <br>
+                                    <small class="text-muted">@Model.CreatedAt.ToString("hh:mm tt")</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- محتوى الرسالة -->
+                    <div class="mb-4">
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-chat-square-text me-2"></i>نص الرسالة:
+                        </h6>
+                        <div class="bg-light p-4 rounded">
+                            <p class="mb-0" style="white-space: pre-wrap; line-height: 1.8;">@Model.Message</p>
+                        </div>
+                    </div>
+
+                    <!-- حالة الرسالة -->
+                    <div class="alert @(Model.IsRead ? "alert-success" : "alert-warning") mb-4">
+                        <i class="bi bi-@(Model.IsRead ? "check-circle" : "exclamation-circle") me-2"></i>
+                        <strong>الحالة:</strong>
+                        @if (Model.IsRead)
+                        {
+                            <span>مقروءة</span>
+                        }
+                        else
+                        {
+                            <span>تم وضع علامة كمقروءة الآن</span>
+                        }
+                    </div>
+
+                    <!-- أزرار الإجراءات -->
+                    <div class="d-flex gap-2">
+                        <a href="mailto:@Model.Email?subject=Re: @Model.Subject"
+                           class="btn btn-primary">
+                            <i class="bi bi-reply-fill me-2"></i>الرد عبر البريد
+                        </a>
+
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                            <i class="bi bi-trash me-2"></i>حذف الرسالة
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-right me-2"></i>العودة للقائمة
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    معرف الرسالة: #@Model.Id
+                </div>
+            </div>
+
+            <!-- نصائح سريعة -->
+            <div class="alert alert-info mt-4">
+                <h6 class="alert-heading">
+                    <i class="bi bi-lightbulb me-2"></i>نصائح:
+                </h6>
+                <ul class="mb-0">
+                    <li>يمكنك الرد مباشرة على المرسل من خلال زر "الرد عبر البريد"</li>
+                    <li>بعد الرد أو معالجة الرسالة، يمكنك حذفها لتنظيم صندوق الوارد</li>
+                    <li>تم تحديد هذه الرسالة تلقائياً كمقروءة</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج حذف مخفي -->
+<form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.Id" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            if (confirm('هل أنت متأكد من حذف هذه الرسالة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+}

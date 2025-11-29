@@ -1,0 +1,306 @@
+﻿@using NpsProject.Areas.Admin.Models
+@model DashboardStats
+
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">
+            <i class="bi bi-speedometer2 me-2"></i>لوحة التحكم
+        </h1>
+        <p class="text-muted mb-0">مرحباً @Model.CurrentUserName (@Model.CurrentUserRole)</p>
+    </div>
+    <div class="text-muted">
+        <i class="bi bi-calendar3 me-2"></i>
+        @DateTime.Now.ToString("dd MMMM yyyy")
+    </div>
+</div>
+
+<!-- Quick Stats Cards -->
+<div class="row g-4 mb-4">
+    <!-- الأخبار -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-muted mb-1">إجمالي الأخبار</p>
+                        <h2 class="mb-0">@Model.TotalNews</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded p-3">
+                        <i class="bi bi-newspaper text-primary fs-3"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-success">
+                        <i class="bi bi-arrow-up me-1"></i>@Model.NewsThisMonth هذا الشهر
+                    </small>
+                    <a asp-area="Admin" asp-controller="News" asp-action="Index"
+                       class="text-decoration-none small">عرض الكل <i class="bi bi-arrow-left"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المشاريع -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-muted mb-1">إجمالي المشاريع</p>
+                        <h2 class="mb-0">@Model.TotalProjects</h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded p-3">
+                        <i class="bi bi-briefcase text-success fs-3"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-success">
+                        <i class="bi bi-arrow-up me-1"></i>@Model.ProjectsThisMonth هذا الشهر
+                    </small>
+                    <a asp-area="Admin" asp-controller="Projects" asp-action="Index"
+                       class="text-decoration-none small">عرض الكل <i class="bi bi-arrow-left"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الرسائل -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-muted mb-1">إجمالي الرسائل</p>
+                        <h2 class="mb-0">@Model.TotalMessages</h2>
+                    </div>
+                    <div class="bg-info bg-opacity-10 rounded p-3">
+                        <i class="bi bi-envelope text-info fs-3"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-danger">
+                        <i class="bi bi-exclamation-circle me-1"></i>@Model.UnreadMessages غير مقروءة
+                    </small>
+                    <a asp-area="Admin" asp-controller="Contact" asp-action="Index"
+                       class="text-decoration-none small">عرض الكل <i class="bi bi-arrow-left"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسائل اليوم -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm h-100 hover-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <p class="text-muted mb-1">رسائل اليوم</p>
+                        <h2 class="mb-0">@Model.MessagesToday</h2>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded p-3">
+                        <i class="bi bi-chat-dots text-warning fs-3"></i>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar-week me-1"></i>@Model.MessagesThisWeek هذا الأسبوع
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="bi bi-lightning-charge me-2"></i>إجراءات سريعة
+                </h5>
+                <div class="row g-3">
+                    <!-- إضافة خبر -->
+                    <div class="col-lg-4 col-md-6">
+                        <a asp-area="Admin" asp-controller="News" asp-action="Create"
+                           class="btn btn-outline-primary w-100 py-3 text-start">
+                            <i class="bi bi-plus-circle fs-4 me-3"></i>
+                            <span>
+                                <strong class="d-block">إضافة خبر جديد</strong>
+                                <small class="text-muted">نشر خبر على الموقع</small>
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- إضافة مشروع -->
+                    <div class="col-lg-4 col-md-6">
+                        <a asp-area="Admin" asp-controller="Projects" asp-action="Create"
+                           class="btn btn-outline-success w-100 py-3 text-start">
+                            <i class="bi bi-folder-plus fs-4 me-3"></i>
+                            <span>
+                                <strong class="d-block">إضافة مشروع جديد</strong>
+                                <small class="text-muted">عرض إنجازات الشركة</small>
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- عرض الرسائل -->
+                    <div class="col-lg-4 col-md-6">
+                        <a asp-area="Admin" asp-controller="Contact" asp-action="Index"
+                           class="btn btn-outline-info w-100 py-3 text-start position-relative">
+                            <i class="bi bi-envelope-open fs-4 me-3"></i>
+                            <span>
+                                <strong class="d-block">عرض الرسائل</strong>
+                                <small class="text-muted">الرد على استفسارات العملاء</small>
+                            </span>
+                            @if (Model.UnreadMessages > 0)
+                            {
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @Model.UnreadMessages
+                                </span>
+                            }
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Content -->
+<div class="row g-4">
+    <!-- أحدث الأخبار -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-newspaper me-2"></i>أحدث الأخبار
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.LatestNews != null && Model.LatestNews.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var news in Model.LatestNews)
+                        {
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">@news.Title</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3 me-1"></i>
+                                            @news.PublishedDate.ToString("dd/MM/yyyy")
+                                        </small>
+                                        @if (!news.IsPublished)
+                                        {
+                                            <span class="badge bg-warning text-dark ms-2">مسودة</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success ms-2">منشور</span>
+                                        }
+                                    </div>
+                                    <a asp-area="Admin" asp-controller="News" asp-action="Edit"
+                                       asp-route-id="@news.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                        <p>لا توجد أخبار بعد</p>
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-white text-center">
+                <a asp-area="Admin" asp-controller="News" asp-action="Index"
+                   class="text-decoration-none">
+                    عرض جميع الأخبار <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- أحدث الرسائل -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0">
+                    <i class="bi bi-envelope me-2"></i>أحدث الرسائل
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.LatestMessages != null && Model.LatestMessages.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var message in Model.LatestMessages)
+                        {
+                            <div class="list-group-item list-group-item-action @(!message.IsRead ? "bg-light" : "")">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            @if (!message.IsRead)
+                                            {
+                                                <i class="bi bi-envelope-fill text-primary me-1"></i>
+                                            }
+                                            @message.Subject
+                                        </h6>
+                                        <small class="text-muted d-block">
+                                            من: @message.Email
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>
+                                            @message.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </div>
+                                    <a asp-area="Admin" asp-controller="Contact" asp-action="Details"
+                                       asp-route-id="@message.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                        <p>لا توجد رسائل بعد</p>
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-white text-center">
+                <a asp-area="Admin" asp-controller="Contact" asp-action="Index"
+                   class="text-decoration-none">
+                    عرض جميع الرسائل <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+    .list-group-item-action:hover {
+        background-color: #f8f9fa;
+    }
+</style>

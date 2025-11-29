@@ -1,0 +1,231 @@
+﻿@model NpsProject.Models.Project
+
+@{
+    ViewData["Title"] = "تعديل المشروع";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="bi bi-pencil-square me-2"></i>تعديل المشروع
+                </h2>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-right me-2"></i>العودة للقائمة
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ImageUrl" />
+                        <input type="hidden" asp-for="CreatedAt" />
+
+                        <div class="row">
+                            <!-- العنوان -->
+                            <div class="col-md-8 mb-4">
+                                <label asp-for="Title" class="form-label fw-bold">
+                                    <i class="bi bi-type me-2"></i>@Html.DisplayNameFor(m => m.Title)
+                                </label>
+                                <input asp-for="Title" class="form-control form-control-lg" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <!-- تاريخ الإنجاز -->
+                            <div class="col-md-4 mb-4">
+                                <label asp-for="CompletionDate" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-check me-2"></i>@Html.DisplayNameFor(m => m.CompletionDate)
+                                </label>
+                                <input asp-for="CompletionDate" type="month" class="form-control" />
+                                <span asp-validation-for="CompletionDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- الوصف -->
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="bi bi-text-paragraph me-2"></i>@Html.DisplayNameFor(m => m.Description)
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="form-text text-muted">الحد الأقصى: 1000 حرف</small>
+                                <small class="form-text text-muted" id="descCount">
+                                    @Model.Description?.Length ?? 0 / 1000
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- التاجات -->
+                        <div class="mb-4">
+                            <label asp-for="Tags" class="form-label fw-bold">
+                                <i class="bi bi-tags me-2"></i>@Html.DisplayNameFor(m => m.Tags)
+                            </label>
+                            <input asp-for="Tags" class="form-control" />
+                            <span asp-validation-for="Tags" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                افصل بين التاجات بفاصلة
+                            </small>
+                        </div>
+
+                        <!-- الصورة الحالية -->
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-image me-2"></i>الصورة الحالية
+                                </label>
+                                <div class="position-relative" style="max-width: 400px;">
+                                    <img src="@Model.ImageUrl" class="img-thumbnail w-100" alt="@Model.Title" />
+                                    <div class="mt-2">
+                                        <span class="badge bg-info">صورة موجودة</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- تغيير الصورة -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-arrow-repeat me-2"></i>
+                                @(string.IsNullOrEmpty(Model.ImageUrl) ? "رفع صورة" : "تغيير الصورة")
+                            </label>
+                            <input type="file" name="imageFile" class="form-control"
+                                   accept="image/*" id="imageInput" />
+                            <small class="form-text text-muted">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <span>اترك الحقل فارغاً للإبقاء على الصورة الحالية</span>
+                                }
+                                else
+                                {
+                                    <span>الصيغ المدعومة: JPG, PNG, GIF, WEBP - الحد الأقصى: 5MB</span>
+                                }
+                            </small>
+
+                            <!-- معاينة الصورة الجديدة -->
+                            <div id="imagePreview" class="mt-3" style="display:none;">
+                                <p class="text-muted small mb-2">الصورة الجديدة:</p>
+                                <img id="previewImg" class="img-thumbnail" style="max-height: 300px;" />
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="clearImage()">
+                                    <i class="bi bi-x-circle me-1"></i>إلغاء
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- حالة المشروع -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox"
+                                       id="isActiveSwitch" />
+                                <label class="form-check-label fw-bold" for="isActiveSwitch">
+                                    <i class="bi bi-check-circle me-2"></i>مشروع نشط
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- معلومات إضافية -->
+                        <div class="alert alert-light">
+                            <div class="row small">
+                                <div class="col-md-6">
+                                    <i class="bi bi-hash me-1"></i>
+                                    <strong>معرف المشروع:</strong> #@Model.Id
+                                </div>
+                                <div class="col-md-6">
+                                    <i class="bi bi-calendar-plus me-1"></i>
+                                    <strong>تاريخ الإضافة:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- الأزرار -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-check-circle me-2"></i>حفظ التعديلات
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info btn-lg">
+                                <i class="bi bi-eye me-2"></i>معاينة
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // عداد أحرف الوصف
+        const descTextarea = document.querySelector('textarea[name="Description"]');
+        const descCount = document.getElementById('descCount');
+
+        if (descTextarea && descCount) {
+            descTextarea.addEventListener('input', function() {
+                const count = this.value.length;
+                descCount.textContent = `${count} / 1000`;
+
+                if (count > 1000) {
+                    descCount.classList.add('text-danger');
+                } else {
+                    descCount.classList.remove('text-danger');
+                }
+            });
+        }
+
+        // معاينة الصورة الجديدة
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('يرجى اختيار ملف صورة صالح');
+                    this.value = '';
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('حجم الصورة يجب أن يكون أقل من 5MB');
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearImage() {
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            previewImg.src = '';
+        }
+
+        // منع الإرسال المتكرر
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>جاري الحفظ...';
+        });
+    </script>
+}

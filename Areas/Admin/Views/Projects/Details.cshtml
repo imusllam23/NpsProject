@@ -1,0 +1,243 @@
+﻿@model NpsProject.Models.Project
+
+@{
+    ViewData["Title"] = "تفاصيل المشروع";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="bi bi-eye me-2"></i>تفاصيل المشروع
+                </h2>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>تعديل
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right me-2"></i>العودة
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- معلومات المشروع -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg mb-4">
+                        <!-- الصورة -->
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" class="card-img-top"
+                                 style="max-height: 400px; object-fit: cover;" alt="@Model.Title">
+                        }
+
+                        <div class="card-body p-4">
+                            <!-- العنوان والحالة -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="mb-0">@Model.Title</h3>
+                                @if (Model.IsActive)
+                                {
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-check-circle me-1"></i>نشط
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="bi bi-x-circle me-1"></i>غير نشط
+                                    </span>
+                                }
+                            </div>
+
+                            <hr>
+
+                            <!-- الوصف -->
+                            <div class="mb-4">
+                                <h5 class="text-muted mb-3">
+                                    <i class="bi bi-text-paragraph me-2"></i>الوصف:
+                                </h5>
+                                <p class="lead" style="line-height: 1.8; text-align: justify;">
+                                    @Model.Description
+                                </p>
+                            </div>
+
+                            <!-- التاجات -->
+                            @if (!string.IsNullOrEmpty(Model.Tags))
+                            {
+                                <div class="mb-4">
+                                    <h5 class="text-muted mb-3">
+                                        <i class="bi bi-tags me-2"></i>التاجات:
+                                    </h5>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var tag in Model.GetTagsList())
+                                        {
+                                            <span class="badge bg-secondary fs-6 px-3 py-2">
+                                                <i class="bi bi-tag-fill me-1"></i>@tag
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- معلومات إضافية -->
+                            <div class="row g-3">
+                                @if (Model.CompletionDate.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-start">
+                                            <div class="bg-success bg-opacity-10 rounded p-3 me-3">
+                                                <i class="bi bi-calendar-check text-success fs-4"></i>
+                                            </div>
+                                            <div>
+                                                <small class="text-muted d-block">تاريخ الإنجاز</small>
+                                                <strong>@Model.CompletionDate.Value.ToString("MMMM yyyy")</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-info bg-opacity-10 rounded p-3 me-3">
+                                            <i class="bi bi-calendar-plus text-info fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block">تاريخ الإضافة</small>
+                                            <strong>@Model.CreatedAt.ToString("dd MMMM yyyy")</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الإجراءات والمعلومات الجانبية -->
+                <div class="col-lg-4">
+                    <!-- الإجراءات السريعة -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0">
+                                <i class="bi bi-lightning-charge me-2"></i>إجراءات سريعة
+                            </h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a asp-action="Edit" asp-route-id="@Model.Id"
+                               class="list-group-item list-group-item-action">
+                                <i class="bi bi-pencil-square me-2"></i>تعديل المشروع
+                            </a>
+                            <a asp-area="" asp-controller="Projects" asp-action="Details" asp-route-id="@Model.Id"
+                               class="list-group-item list-group-item-action" target="_blank">
+                                <i class="bi bi-box-arrow-up-right me-2"></i>معاينة في الموقع
+                            </a>
+                            <button type="button" class="list-group-item list-group-item-action"
+                                    onclick="toggleActive(@Model.Id, @Model.IsActive.ToString().ToLower())">
+                                <i class="bi bi-@(Model.IsActive ? "pause" : "play")-circle me-2"></i>
+                                @(Model.IsActive ? "إيقاف" : "تفعيل") المشروع
+                            </button>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button type="button" class="list-group-item list-group-item-action text-danger"
+                                        onclick="deleteProject()">
+                                    <i class="bi bi-trash me-2"></i>حذف المشروع
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- معلومات إضافية -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-info-circle me-2"></i>معلومات إضافية
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <small class="text-muted">معرف المشروع:</small>
+                                    <br><strong>#@Model.Id</strong>
+                                </li>
+                                <li class="mb-2">
+                                    <small class="text-muted">الحالة:</small>
+                                    <br>
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">نشط - معروض في الموقع</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">غير نشط - مخفي من الموقع</span>
+                                    }
+                                </li>
+                                <li class="mb-2">
+                                    <small class="text-muted">عدد التاجات:</small>
+                                    <br><strong>@Model.GetTagsList().Count</strong>
+                                </li>
+                                <li class="mb-0">
+                                    <small class="text-muted">الصورة:</small>
+                                    <br>
+                                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>موجودة
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>غير موجودة
+                                        </span>
+                                    }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج حذف مخفي -->
+<form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.Id" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function deleteProject() {
+            if (confirm('هل أنت متأكد من حذف هذا المشروع؟\n\nسيتم حذف الصورة أيضاً ولا يمكن التراجع عن هذا الإجراء.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        function toggleActive(id, currentStatus) {
+            const action = currentStatus ? 'إيقاف' : 'تفعيل';
+            if (confirm(`هل أنت متأكد من ${action} هذا المشروع؟`)) {
+                fetch('@Url.Action("ToggleActive", "Projects", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('حدث خطأ: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال');
+                });
+            }
+        }
+    </script>
+}

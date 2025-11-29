@@ -1,0 +1,379 @@
+﻿@model IEnumerable<NpsProject.Models.ContactMessage>
+
+@{
+    ViewData["Title"] = "إدارة الرسائل";
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+    var totalItems = (int)ViewBag.TotalItems;
+    var currentFilter = (string)ViewBag.CurrentFilter;
+}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-2">
+            <i class="bi bi-envelope-open me-2"></i>إدارة الرسائل
+        </h2>
+        <p class="text-muted mb-0">
+            إجمالي: <strong>@ViewBag.TotalMessages</strong> رسالة
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-danger" onclick="deleteSelected()" id="deleteSelectedBtn" disabled>
+            <i class="bi bi-trash me-2"></i>حذف المحدد
+        </button>
+        <a asp-action="Export" class="btn btn-outline-success">
+            <i class="bi bi-download me-2"></i>تصدير CSV
+        </a>
+    </div>
+</div>
+
+<!-- Alerts -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Filters & Stats -->
+<div class="row g-3 mb-4">
+    <!-- إحصائيات سريعة -->
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 text-primary mb-2">@ViewBag.TotalMessages</div>
+                <small class="text-muted">إجمالي الرسائل</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 text-danger mb-2">@ViewBag.UnreadCount</div>
+                <small class="text-muted">غير مقروءة</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 text-success mb-2">@ViewBag.ReadCount</div>
+                <small class="text-muted">مقروءة</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="display-6 text-info mb-2">@ViewBag.TodayCount</div>
+                <small class="text-muted">رسائل اليوم</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted me-2"><i class="bi bi-funnel me-1"></i>فلترة:</span>
+            <a asp-action="Index" asp-route-page="1" asp-route-filter="all"
+               class="btn btn-sm @(currentFilter == "all" ? "btn-primary" : "btn-outline-primary")">
+                <i class="bi bi-grid-3x3-gap me-1"></i>الكل (@ViewBag.TotalMessages)
+            </a>
+            <a asp-action="Index" asp-route-page="1" asp-route-filter="unread"
+               class="btn btn-sm @(currentFilter == "unread" ? "btn-danger" : "btn-outline-danger")">
+                <i class="bi bi-envelope-fill me-1"></i>غير مقروءة (@ViewBag.UnreadCount)
+            </a>
+            <a asp-action="Index" asp-route-page="1" asp-route-filter="read"
+               class="btn btn-sm @(currentFilter == "read" ? "btn-success" : "btn-outline-success")">
+                <i class="bi bi-envelope-open me-1"></i>مقروءة (@ViewBag.ReadCount)
+            </a>
+            <a asp-action="Index" asp-route-page="1" asp-route-filter="today"
+               class="btn btn-sm @(currentFilter == "today" ? "btn-info" : "btn-outline-info")">
+                <i class="bi bi-calendar-day me-1"></i>اليوم (@ViewBag.TodayCount)
+            </a>
+            <a asp-action="Index" asp-route-page="1" asp-route-filter="week"
+               class="btn btn-sm @(currentFilter == "week" ? "btn-warning" : "btn-outline-warning")">
+                <i class="bi bi-calendar-week me-1"></i>هذا الأسبوع
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Messages List -->
+@if (!Model.Any())
+{
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted mb-4"></i>
+            <h4 class="text-muted">لا توجد رسائل</h4>
+            <p class="text-muted">@(currentFilter != "all" ? "جرب فلتر آخر" : "لم يتم استلام أي رسائل بعد")</p>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Form للحذف المتعدد -->
+    <form id="deleteMultipleForm" asp-action="DeleteMultiple" method="post">
+        <input type="hidden" name="currentPage" value="@currentPage" />
+        <input type="hidden" name="currentFilter" value="@currentFilter" />
+        @Html.AntiForgeryToken()
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    @foreach (var message in Model)
+                    {
+                        <div class="list-group-item list-group-item-action @(!message.IsRead ? "bg-light border-start" : "")">
+                            <div class="row align-items-center">
+                                <!-- Checkbox -->
+                                <div class="col-auto">
+                                    <input type="checkbox" class="form-check-input message-checkbox"
+                                           name="ids" value="@message.Id"
+                                           onchange="updateDeleteButton()">
+                                </div>
+
+                                <!-- حالة الرسالة -->
+                                <div class="col-auto">
+                                    @if (!message.IsRead)
+                                    {
+                                        <i class="bi bi-envelope-fill text-primary fs-4" title="غير مقروءة"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-envelope-open text-muted fs-4" title="مقروءة"></i>
+                                    }
+                                </div>
+
+                                <!-- محتوى الرسالة -->
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 @(!message.IsRead ? "fw-bold" : "")">
+                                                @message.Subject
+                                                @if (!message.IsRead)
+                                                {
+                                                    <span class="badge bg-primary ms-2">جديد</span>
+                                                }
+                                            </h6>
+                                            <div class="text-muted small mb-2">
+                                                <i class="bi bi-person-circle me-1"></i>
+                                                <strong>من:</strong> @message.Email
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small text-end">
+                                            <div>
+                                                <i class="bi bi-calendar3 me-1"></i>
+                                                @message.CreatedAt.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-clock me-1"></i>
+                                                @message.CreatedAt.ToString("hh:mm tt")
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- معاينة الرسالة -->
+                                    <p class="text-muted mb-2 small">
+                                        @if (message.Message.Length > 150)
+                                        {
+                                            @(message.Message.Substring(0, 150) + "...")
+                                        }
+                                        else
+                                        {
+                                            @message.Message
+                                        }
+                                    </p>
+
+                                    <!-- الأزرار -->
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="Details" asp-route-id="@message.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye me-1"></i>عرض التفاصيل
+                                        </a>
+
+                                        <a href="mailto:@message.Email?subject=Re: @message.Subject"
+                                           class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-reply me-1"></i>رد
+                                        </a>
+
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteSingle(@message.Id)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="تصفح الرسائل" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- السابق -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(currentPage - 1)"
+                       asp-route-filter="@currentFilter">
+                        <i class="bi bi-chevron-right"></i> السابق
+                    </a>
+                </li>
+
+                <!-- أرقام الصفحات -->
+                @{
+                    var startPage = Math.Max(1, currentPage - 2);
+                    var endPage = Math.Min(totalPages, currentPage + 2);
+                }
+
+                @if (startPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-filter="@currentFilter">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+                @for (var i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-filter="@currentFilter">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-action="Index" asp-route-page="@totalPages" asp-route-filter="@currentFilter">
+                            @totalPages
+                        </a>
+                    </li>
+                }
+
+                <!-- التالي -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(currentPage + 1)"
+                       asp-route-filter="@currentFilter">
+                        التالي <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- معلومات الصفحة -->
+            <div class="text-center text-muted small">
+                عرض @((currentPage - 1) * ViewBag.PageSize + 1) -
+                @Math.Min(currentPage * ViewBag.PageSize, totalItems)
+                من أصل @totalItems رسالة
+            </div>
+        </nav>
+    }
+}
+
+<!-- نموذج حذف منفرد مخفي -->
+<form id="deleteSingleForm" method="post" asp-action="Delete" style="display:none;">
+    <input type="hidden" name="id" id="deleteId" />
+    <input type="hidden" name="currentPage" value="@currentPage" />
+    <input type="hidden" name="currentFilter" value="@currentFilter" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        // تحديث زر الحذف المتعدد
+        function updateDeleteButton() {
+            const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            deleteBtn.disabled = checkboxes.length === 0;
+            deleteBtn.textContent = checkboxes.length > 0
+                ? `حذف (${checkboxes.length})`
+                : 'حذف المحدد';
+        }
+
+        // حذف رسالة واحدة
+        function deleteSingle(id) {
+            if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+                document.getElementById('deleteId').value = id;
+                document.getElementById('deleteSingleForm').submit();
+            }
+        }
+
+        // حذف متعدد
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('يرجى تحديد رسالة واحدة على الأقل');
+                return;
+            }
+
+            if (confirm(`هل أنت متأكد من حذف ${checkboxes.length} رسالة؟`)) {
+                document.getElementById('deleteMultipleForm').submit();
+            }
+        }
+
+        // تحديد/إلغاء تحديد الكل
+        document.addEventListener('DOMContentLoaded', function() {
+            // إضافة زر تحديد الكل (اختياري)
+            const firstCheckbox = document.querySelector('.message-checkbox');
+            if (firstCheckbox) {
+                const selectAllBtn = document.createElement('button');
+                selectAllBtn.type = 'button';
+                selectAllBtn.className = 'btn btn-sm btn-outline-secondary me-2';
+                selectAllBtn.innerHTML = '<i class="bi bi-check-square me-1"></i>تحديد الكل';
+                selectAllBtn.onclick = function() {
+                    const checkboxes = document.querySelectorAll('.message-checkbox');
+                    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                    checkboxes.forEach(cb => cb.checked = !allChecked);
+                    this.innerHTML = allChecked
+                        ? '<i class="bi bi-check-square me-1"></i>تحديد الكل'
+                        : '<i class="bi bi-square me-1"></i>إلغاء التحديد';
+                    updateDeleteButton();
+                };
+
+                const deleteBtn = document.getElementById('deleteSelectedBtn');
+                deleteBtn.parentElement.insertBefore(selectAllBtn, deleteBtn);
+            }
+        });
+    </script>
+}
+
+<style>
+    .list-group-item {
+        transition: background-color 0.2s;
+    }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa !important;
+        }
+
+    .page-item.active .page-link {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+</style>

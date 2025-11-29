@@ -42,9 +42,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // ÅÚÏÇÏÇÊ Cookie ááãÕÇÏÞÉ
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.LoginPath = "/Admin/Account/Login";
+    options.LogoutPath = "/Admin/Account/Logout";
+    options.AccessDeniedPath = "/Admin/Account/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
 });
@@ -78,9 +78,9 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapAreaControllerRoute(
-    name: "AdminArea",
-    areaName: "admin",
-    pattern: "admin/{controller=Home}/{action=Index}/{id?}");
+    name: "admin",
+    areaName: "Admin",
+    pattern: "admin/{controller=Account}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

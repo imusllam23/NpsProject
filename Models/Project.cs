@@ -19,6 +19,9 @@ namespace NpsProject.Models
         [Display(Name = "صورة المشروع")]
         public string? ImageUrl { get; set; }
 
+         [Display(Name = "رابط المشروع")]
+        public string? Url { get; set; }
+
         [Display(Name = "التاجات الوصفية")]
         public string? Tags { get; set; } 
 

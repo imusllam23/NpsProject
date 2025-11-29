@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model List<Project>
+
 
 <!-- Hero Section -->
 
@@ -184,7 +186,7 @@
 </section><!-- /About Section -->
 <section id="services-section">
     <div class="services-container container ">
-        <h2 class="section-title">مجالاتنا وخدماتنا</h2>
+        <h2 class="section-title"> <i class="bi bi-server me-2"></i>مجالاتنا وخدماتنا</h2>
 
         <!-- الشبكة -->
         <div class="row g-3 mx-lg-5 mx-xl-0 justify-content-center">
@@ -266,113 +268,99 @@
     </div>
 
 </section>
-<section id="Projects" class="projects section light-background">
+<section id="Projects" class="projects section light-background ">
     <div class="container">
-        <h2 class="section-title dark">أعمالنا</h2>
-        <div class="row  g-4 justify-content-center">
-            <div class="col-auto">
-                <div class="adv-card ">
-                    <div aria-label="Abstract gradient background"
-                         role="img"
-                         class="adv-card-image"></div>
-                    <div class="adv-card-content">
-                        <p class="adv-card-title">Advanced CSS adv-card</p>
-                        <p class="adv-card-description">
-                            This adv-card showcases advanced CSS techniques including animations,
-                            gradients, and interactive elements.
-                        </p>
-                        <div class="adv-card-tags">
-                            <span class="adv-card-tag">Design</span>
-                            <span class="adv-card-tag">CSS</span>
-                            <span class="adv-card-tag">HTML</span>
-                        </div>
-                        <div class="adv-card-footer">
+        <h2 class="section-title dark text-center mb-5">
+            <i class="bi bi-briefcase-fill me-2"></i>أعمالنا
+        </h2>
 
-                            <a href="#" class="btn btn-gradient mt-auto w-100">الرابط</a>
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4 justify-content-center">
+                @foreach (var project in Model)
+                {
+                    <div class="col-auto">
+                        <div class="adv-card">
+                            <!-- صورة المشروع -->
+                            @if (!string.IsNullOrEmpty(project.ImageUrl))
+                            {
+                                <div class="adv-card-image" 
+                                     style="background-image: url('@project.ImageUrl'); background-size: cover; background-position: center;"
+                                     role="img" 
+                                     aria-label="@project.Title">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="adv-card-image"
+                                     aria-label="Abstract gradient background"
+                                     role="img">
+                                    <div class="d-flex align-items-center justify-content-center h-100">
+                                        <i class="bi bi-image display-4 text-light"></i>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="adv-card-content">
+                                <!-- عنوان المشروع -->
+                                <p class="adv-card-title">@project.Title</p>
+
+                                <!-- وصف المشروع -->
+                                <p class="adv-card-description">
+                                    @if (project.Description.Length > 120)
+                                    {
+                                        @(project.Description.Substring(0, 120) + "...")
+                                    }
+                                    else
+                                    {
+                                        @project.Description
+                                    }
+                                </p>
+
+                                <!-- التاجات (Tags) -->
+                                @if (!string.IsNullOrEmpty(project.Tags))
+                                {
+                                    <div class="adv-card-tags">
+                                        @foreach (var tag in project.GetTagsList())
+                                        {
+                                            <span class="adv-card-tag">@tag</span>
+                                        }
+                                    </div>
+                                }
+
+                                <!-- زر التفاصيل -->
+                                <div class="adv-card-footer">
+                                    <a href="@project.Url"
+                                       class="btn btn-gradient mt-auto w-100">
+                                        <i class="bi bi-arrow-left me-2"></i>الرابط
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-           </div>
-            <div class="col-auto">
-                <div class="adv-card ">
-                    <div aria-label="Abstract gradient background"
-                         role="img"
-                         class="adv-card-image"></div>
-                    <div class="adv-card-content">
-                        <p class="adv-card-title">Advanced CSS adv-card</p>
-                        <p class="adv-card-description">
-                            This adv-card showcases advanced CSS techniques including animations,
-                            gradients, and interactive elements.
-                        </p>
-                        <div class="adv-card-tags">
-                            <span class="adv-card-tag">Design</span>
-                            <span class="adv-card-tag">CSS</span>
-                            <span class="adv-card-tag">HTML</span>
-                        </div>
-                        <div class="adv-card-footer">
-
-                            <a href="#" class="btn btn-gradient mt-auto w-100">الرابط</a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
-            <div class="col-auto">
-                <div class="adv-card ">
-                    <div aria-label="Abstract gradient background"
-                         role="img"
-                         class="adv-card-image"></div>
-                    <div class="adv-card-content">
-                        <p class="adv-card-title">Advanced CSS adv-card</p>
-                        <p class="adv-card-description">
-                            This adv-card showcases advanced CSS techniques including animations,
-                            gradients, and interactive elements.
-                        </p>
-                        <div class="adv-card-tags">
-                            <span class="adv-card-tag">Design</span>
-                            <span class="adv-card-tag">CSS</span>
-                            <span class="adv-card-tag">HTML</span>
-                        </div>
-                        <div class="adv-card-footer">
 
-                            <a href="#" class="btn btn-gradient mt-auto w-100">الرابط</a>
-                        </div>
-                    </div>
-                </div>
+            <!-- زر عرض المزيد -->
+            <div class="text-center mt-5">
+                <a asp-controller="Projects" asp-action="Index" class="btn btn-gradient btn-lg">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>عرض جميع المشاريع
+                </a>
             </div>
-            <div class="col-auto">
-                <div class="adv-card ">
-                    <div aria-label="Abstract gradient background"
-                         role="img"
-                         class="adv-card-image"></div>
-                    <div class="adv-card-content">
-                        <p class="adv-card-title">Advanced CSS adv-card</p>
-                        <p class="adv-card-description">
-                            This adv-card showcases advanced CSS techniques including animations,
-                            gradients, and interactive elements.
-                        </p>
-                        <div class="adv-card-tags">
-                            <span class="adv-card-tag">Design</span>
-                            <span class="adv-card-tag">CSS</span>
-                            <span class="adv-card-tag">HTML</span>
-                        </div>
-                        <div class="adv-card-footer">
-
-                            <a href="#" class="btn btn-gradient mt-auto w-100">الرابط</a>
-                        </div>
-                    </div>
-                </div>
+        }
+        else
+        {
+            <!-- رسالة عدم وجود مشاريع -->
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted mb-4"></i>
+                <h4 class="text-muted">لا توجد مشاريع حالياً</h4>
+                <p class="text-muted">سيتم عرض مشاريعنا قريباً</p>
             </div>
-          
-          
-           
-          
-        </div>
-          </div>
-</section>
-
+        }
     </div>
+</section>
 <!-- Stats Section -->
-<section id="stats" class="stats section light-background">
+@* <section id="stats" class="stats section light-background">
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         <h2 class="section-title">انجازاتنا</h2>
@@ -418,7 +406,7 @@
 
     </div>
 
-</section><!-- /Stats Section -->
+</section> *@<!-- /Stats Section -->
 @section scripts {
     <!-- lib JS Files -->
     <script src="~/lib/php-email-form/validate.js"></script>

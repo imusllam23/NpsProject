@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NpsProject.Data;
 using NpsProject.Models;
 
@@ -14,12 +15,19 @@ public class HomeController : Controller
     public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
         _logger = logger;
-        _context = context ;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<ActionResult> Index()
     {
-        return View();
+        // ÌáÈ ÂÎÑ 6 ãÔÇÑíÚ
+        var projects = await _context.Projects
+            .Where(p => p.IsActive)
+            .OrderByDescending(p => p.CreatedAt)
+            .Take(6)
+            .ToListAsync();
+
+        return View(projects);
     }
 
     
@@ -32,6 +40,7 @@ public class HomeController : Controller
         [AllowAnonymous]
         public IActionResult contact()
         {
+
             return View();
         }
 

@@ -1,0 +1,371 @@
+﻿@model NpsProject.Models.NewsArticle
+
+@{
+    ViewData["Title"] = "تعديل خبر";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i class="bi bi-pencil-square me-2"></i>تعديل الخبر
+                    </h2>
+                    <p class="text-muted mb-0">
+                        آخر تحديث: @(Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "لم يتم التحديث بعد")
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <!-- معاينة الخبر (إذا كان منشور) -->
+                    @if (Model.IsPublished)
+                    {
+                        <a asp-area="" asp-controller="News" asp-action="Details"
+                           asp-route-id="@Model.Id" target="_blank"
+                           class="btn btn-outline-info">
+                            <i class="bi bi-eye me-2"></i>معاينة في الموقع
+                        </a>
+                    }
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right me-2"></i>العودة
+                    </a>
+                </div>
+            </div>
+
+            <!-- حالة الخبر الحالية -->
+            <div class="alert @(Model.IsPublished ? "alert-success" : "alert-warning") mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="bi @(Model.IsPublished ? "bi-check-circle-fill" : "bi-clock-fill") fs-4 me-3"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">
+                            الحالة الحالية: <strong>@(Model.IsPublished ? "منشور" : "مسودة")</strong>
+                        </h6>
+                        <small>
+                            @if (Model.IsPublished)
+                            {
+                                <span>تم النشر في: @Model.PublishedDate.ToString("dd MMMM yyyy")</span>
+                            }
+                            else
+                            {
+                                <span>هذا الخبر غير مرئي للزوار حالياً</span>
+                            }
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نموذج التعديل -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data" id="editNewsForm">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        <input type="hidden" asp-for="ImageUrl" id="currentImageUrl" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- العنوان -->
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label fw-bold">
+                                <i class="bi bi-card-heading me-2"></i>@Html.DisplayNameFor(m => m.Title)
+                            </label>
+                            <input asp-for="Title" class="form-control form-control-lg"
+                                   placeholder="عنوان الخبر" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- المحتوى -->
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label fw-bold">
+                                <i class="bi bi-text-paragraph me-2"></i>@Html.DisplayNameFor(m => m.Content)
+                            </label>
+                            <textarea asp-for="Content" class="form-control" rows="12"
+                                      placeholder="اكتب محتوى الخبر هنا..." id="contentEditor"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                يمكنك استخدام فقرات متعددة بالضغط على Enter
+                            </small>
+                        </div>
+
+                        <!-- الصورة -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-image me-2"></i>صورة الخبر
+                            </label>
+
+                            <!-- الصورة الحالية -->
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <div class="mb-3" id="currentImagePreview">
+                                    <p class="text-muted mb-2">الصورة الحالية:</p>
+                                    <div class="position-relative d-inline-block">
+                                        <img src="@Model.ImageUrl" alt="الصورة الحالية"
+                                             class="img-thumbnail" style="max-height: 200px;">
+                                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                                onclick="removeCurrentImage()" title="حذف الصورة">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- رفع صورة جديدة -->
+                            <input type="file" name="imageFile" class="form-control"
+                                   accept="image/*" id="imageInput" />
+                            <small class="form-text text-muted d-block mt-1">
+                                اترك الحقل فارغاً للإبقاء على الصورة الحالية، أو اختر صورة جديدة لاستبدالها
+                            </small>
+
+                            <!-- معاينة الصورة الجديدة -->
+                            <div id="newImagePreview" class="mt-3" style="display:none;">
+                                <p class="text-muted mb-2">الصورة الجديدة:</p>
+                                <img id="previewImg" class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- الكاتب -->
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Author" class="form-label fw-bold">
+                                    <i class="bi bi-person me-2"></i>@Html.DisplayNameFor(m => m.Author)
+                                </label>
+                                <input asp-for="Author" class="form-control" placeholder="اسم الكاتب" />
+                                <span asp-validation-for="Author" class="text-danger"></span>
+                            </div>
+
+                            <!-- تاريخ النشر -->
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="PublishedDate" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event me-2"></i>@Html.DisplayNameFor(m => m.PublishedDate)
+                                </label>
+                                <input asp-for="PublishedDate" type="datetime-local" class="form-control" />
+                                <span asp-validation-for="PublishedDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- حالة النشر -->
+                        <div class="mb-4">
+                            <div class="card @(Model.IsPublished ? "border-success" : "border-warning")">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="bi bi-toggles me-2"></i>حالة النشر
+                                    </h6>
+
+                                    <div class="form-check form-switch form-check-lg">
+                                        <input asp-for="IsPublished" class="form-check-input"
+                                               type="checkbox" id="publishSwitch"
+                                               onchange="updatePublishStatus(this.checked)">
+                                        <label class="form-check-label fw-bold" for="publishSwitch">
+                                            <span id="publishLabel">
+                                                @(Model.IsPublished ? "منشور - مرئي للجميع" : "مسودة - غير مرئي للزوار")
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <div class="mt-3 p-3 rounded" id="publishInfo"
+                                         style="background-color: @(Model.IsPublished ? "#d1e7dd" : "#fff3cd")">
+                                        <small id="publishInfoText">
+                                            @if (Model.IsPublished)
+                                            {
+                                                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                                <span>هذا الخبر <strong>منشور</strong> ويمكن للزوار رؤيته في الموقع</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>
+                                                <span>هذا الخبر <strong>مسودة</strong> ولن يظهر للزوار حتى تقوم بنشره</span>
+                                            }
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- الأزرار -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <!-- حفظ -->
+                            <button type="submit" class="btn btn-primary btn-lg" name="action" value="save">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span id="saveButtonText">
+                                    @(Model.IsPublished ? "حفظ التعديلات" : "حفظ كمسودة")
+                                </span>
+                            </button>
+
+                            <!-- حفظ ونشر (إذا كانت مسودة) -->
+                            @if (!Model.IsPublished)
+                            {
+                                <button type="button" class="btn btn-success btn-lg" onclick="saveAndPublish()">
+                                    <i class="bi bi-send-check me-2"></i>حفظ ونشر الآن
+                                </button>
+                            }
+
+                            <!-- معاينة -->
+                            @if (Model.IsPublished)
+                            {
+                                <a asp-area="" asp-controller="News" asp-action="Details"
+                                   asp-route-id="@Model.Id" target="_blank"
+                                   class="btn btn-outline-info btn-lg">
+                                    <i class="bi bi-eye me-2"></i>معاينة
+                                </a>
+                            }
+
+                            <!-- إلغاء -->
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>إلغاء
+                            </a>
+
+                            <!-- حذف -->
+                            <button type="button" class="btn btn-outline-danger btn-lg ms-auto"
+                                    onclick="confirmDelete()">
+                                <i class="bi bi-trash me-2"></i>حذف الخبر
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- معلومات إضافية -->
+                <div class="card-footer bg-light">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <strong>معرف الخبر:</strong> #@Model.Id |
+                        <strong>تم الإنشاء:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <span> | <strong>آخر تحديث:</strong> @Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        }
+                    </small>
+                </div>
+            </div>
+
+            <!-- نصائح -->
+            <div class="alert alert-info mt-4">
+                <h6 class="alert-heading">
+                    <i class="bi bi-lightbulb me-2"></i>نصائح:
+                </h6>
+                <ul class="mb-0 small">
+                    <li>استخدم العنوان الجذاب لجذب انتباه القراء</li>
+                    <li>اكتب محتوى واضح ومفصل</li>
+                    <li>اختر صورة ذات جودة عالية تعبر عن الخبر</li>
+                    <li>إذا لم تكن متأكداً، احفظ كمسودة واطلب مراجعتها</li>
+                    <li>يمكنك تحويل المسودة إلى منشور في أي وقت</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نموذج حذف مخفي -->
+<form id="deleteForm" method="post" asp-action="Delete" asp-route-id="@Model.Id" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // معاينة الصورة الجديدة
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('newImagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('newImagePreview').style.display = 'none';
+            }
+        });
+
+        // حذف الصورة الحالية
+        function removeCurrentImage() {
+            if (confirm('هل تريد حذف الصورة الحالية؟')) {
+                document.getElementById('currentImagePreview').style.display = 'none';
+                document.getElementById('currentImageUrl').value = '';
+            }
+        }
+
+        // تحديث نص حالة النشر
+        function updatePublishStatus(isPublished) {
+            const label = document.getElementById('publishLabel');
+            const info = document.getElementById('publishInfo');
+            const infoText = document.getElementById('publishInfoText');
+            const saveButtonText = document.getElementById('saveButtonText');
+
+            if (isPublished) {
+                label.textContent = 'منشور - مرئي للجميع';
+                info.style.backgroundColor = '#d1e7dd';
+                infoText.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i>' +
+                    '<span>هذا الخبر <strong>منشور</strong> ويمكن للزوار رؤيته في الموقع</span>';
+                saveButtonText.textContent = 'حفظ التعديلات';
+            } else {
+                label.textContent = 'مسودة - غير مرئي للزوار';
+                info.style.backgroundColor = '#fff3cd';
+                infoText.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>' +
+                    '<span>هذا الخبر <strong>مسودة</strong> ولن يظهر للزوار حتى تقوم بنشره</span>';
+                saveButtonText.textContent = 'حفظ كمسودة';
+            }
+        }
+
+        // حفظ ونشر
+        function saveAndPublish() {
+            document.getElementById('publishSwitch').checked = true;
+            updatePublishStatus(true);
+            document.getElementById('editNewsForm').submit();
+        }
+
+        // تأكيد الحذف
+        function confirmDelete() {
+            if (confirm('هل أنت متأكد من حذف هذا الخبر؟\n\nسيتم حذف الصورة أيضاً.\nلا يمكن التراجع عن هذا الإجراء.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        // تحذير عند مغادرة الصفحة بدون حفظ
+        let formChanged = false;
+        const form = document.getElementById('editNewsForm');
+        const inputs = form.querySelectorAll('input, textarea');
+
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                formChanged = true;
+            });
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (formChanged) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            formChanged = false;
+        });
+    </script>
+}
+
+<style>
+    .form-check-lg .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+        cursor: pointer;
+    }
+
+    .form-check-lg .form-check-label {
+        cursor: pointer;
+        padding-top: 0.125rem;
+    }
+
+    #contentEditor {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.8;
+    }
+</style>

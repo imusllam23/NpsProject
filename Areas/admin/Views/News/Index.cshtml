@@ -1,5 +1,217 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<NpsProject.Models.NewsArticle>
+
 @{
+    ViewData["Title"] = "إدارة الأخبار";
+    var publishedCount = Model.Count(n => n.IsPublished);
+    var draftCount = Model.Count(n => !n.IsPublished);
+}
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-newspaper me-2"></i>إدارة الأخبار</h2>
+            <p class="text-muted mb-0">
+                إجمالي الأخبار: <strong>@Model.Count()</strong> |
+                منشورة: <span class="badge bg-success">@publishedCount</span> |
+                مسودات: <span class="badge bg-warning">@draftCount</span>
+            </p>
+        </div>
+        <a asp-area="Admin" asp-controller="News" asp-action="Create" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle me-2"></i>إضافة خبر جديد
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+            <h4>لا توجد أخبار حالياً</h4>
+            <p class="mb-3">ابدأ بإضافة أول خبر للموقع</p>
+            <a asp-area="admin" asp-controller="News" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>إضافة خبر
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var article in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100 @(!article.IsPublished ? "border-warning" : "")">
+                        <div class="row g-0 h-100">
+                            <!-- الصورة -->
+                            <div class="col-md-4">
+                                @if (!string.IsNullOrEmpty(article.ImageUrl))
+                                {
+                                    <img src="@article.ImageUrl" class="img-fluid rounded-start h-100"
+                                         alt="@article.Title" style="object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-light h-100 d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- المحتوى -->
+                            <div class="col-md-8">
+                                <div class="card-body d-flex flex-column h-100">
+                                    <!-- العنوان والحالة -->
+                                    <div class="mb-2">
+                                        <h5 class="card-title mb-1">@article.Title</h5>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            @if (article.IsPublished)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>منشور
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-clock me-1"></i>مسودة
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- المحتوى -->
+                                    <p class="card-text text-muted small flex-grow-1">
+                                        @if (article.Content.Length > 100)
+                                        {
+                                            @(article.Content.Substring(0, 100) + "...")
+                                        }
+                                        else
+                                        {
+                                            @article.Content
+                                        }
+                                    </p>
+
+                                    <!-- معلومات إضافية -->
+                                    <div class="small text-muted mb-3">
+                                        <div class="d-flex flex-wrap gap-3">
+                                            @if (!string.IsNullOrEmpty(article.Author))
+                                            {
+                                                <span>
+                                                    <i class="bi bi-person me-1"></i>@article.Author
+                                                </span>
+                                            }
+                                            <span>
+                                                <i class="bi bi-calendar me-1"></i>
+                                                @article.PublishedDate.ToString("dd/MM/yyyy")
+                                            </span>
+                                        </div>
+                                        @if (article.UpdatedAt.HasValue)
+                                        {
+                                            <small class="text-muted d-block mt-1">
+                                                <i class="bi bi-pencil me-1"></i>
+                                                آخر تحديث: @article.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")
+                                            </small>
+                                        }
+                                    </div>
+
+                                    <!-- الأزرار -->
+                                    <div class="d-flex gap-2 mt-auto">
+                                        @if (article.IsPublished)
+                                        {
+                                            <a asp-area="admin" asp-controller="News" asp-action="Details"
+                                               asp-route-id="@article.Id"
+                                               class="btn btn-sm btn-outline-primary"
+                                               target="_blank" title="معاينة">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        }
+                                        <a asp-area="admin" asp-controller="News" asp-action="Edit" asp-route-id="@article.Id"
+                                           class="btn btn-sm btn-outline-secondary" title="تعديل">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="confirmDelete(@article.Id)" title="حذف">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- إحصائيات -->
+        <div class="row mt-5">
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm border-primary">
+                    <div class="card-body">
+                        <i class="bi bi-newspaper fs-1 text-primary"></i>
+                        <h3 class="mt-2">@Model.Count()</h3>
+                        <p class="mb-0 text-muted">إجمالي الأخبار</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm border-success">
+                    <div class="card-body">
+                        <i class="bi bi-check-circle fs-1 text-success"></i>
+                        <h3 class="mt-2">@publishedCount</h3>
+                        <p class="mb-0 text-muted">أخبار منشورة</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm border-warning">
+                    <div class="card-body">
+                        <i class="bi bi-clock fs-1 text-warning"></i>
+                        <h3 class="mt-2">@draftCount</h3>
+                        <p class="mb-0 text-muted">مسودات</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm border-info">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-event fs-1 text-info"></i>
+                        <h3 class="mt-2">
+                            @Model.Where(n => n.PublishedDate.Date == DateTime.Today).Count()
+                        </h3>
+                        <p class="mb-0 text-muted">أخبار اليوم</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+<form id="deleteForm" method="post" asp-area="admin" asp-controller="News" asp-action="Delete" style="display:none;">
+    <input type="hidden" name="id" id="deleteId" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الخبر؟ سيتم حذف الصورة المرفقة أيضاً.')) {
+                document.getElementById('deleteId').value = id;
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        // إخفاء رسالة النجاح تلقائياً بعد 5 ثواني
+        setTimeout(function() {
+            var alert = document.querySelector('.alert-success');
+            if (alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 5000);
+    </script>
 }

@@ -23,6 +23,9 @@
     background: var(--second-background-color);
 }
 
+.stretched-link {
+    color: var( --default-color) !important;
+}
 .stretched-link:hover {
-    color: var(--bs-primary) !important;
+    color: var( --default-color) !important;
 }

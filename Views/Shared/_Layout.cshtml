@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NpsProject</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NpsProject.styles.css" asp-append-version="true" />
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/aos/aos.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/glightbox/css/glightbox.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/swiper/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="~/css/main.css" rel="stylesheet" asp-append-version="true" />
+
     @await RenderSectionAsync("styles", required: false)
 
 </head>
@@ -34,7 +35,7 @@
                     <li><a href="~/home/#Projects">أعمالنا</a></li>
                     <li><a href="~/news">الأخبار</a></li>
 
-                    <li><a href="~/home/contact">تواصل معنا</a></li>
+                    <li><a asp-controller="Home" asp-action="Contact">تواصل معنا</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
